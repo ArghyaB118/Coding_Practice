@@ -1,3 +1,13 @@
+/* LC#670
+
+You are given an integer num. 
+You can swap two digits at most once 
+to get the maximum valued number.
+
+Return the maximum valued number 
+you can get.
+*/
+
 #include <iostream>
 #include <vector>
 #include <stack>
@@ -95,6 +105,6 @@ int maximumSwap(int num) {
 
 
 int main () {
-	cout << maximumSwap (9973) << endl; //  9937 98368 2736 99345125
+	cout << maximumSwap (937903) << endl; //  9973 9937 98368 2736 99345125
 	return 0;
 }

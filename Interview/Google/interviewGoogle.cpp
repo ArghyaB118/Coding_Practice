@@ -6,8 +6,14 @@
 //
 
 #include <stdio.h>
-// You're given an interface of a Dynamic Tree, your task is to write an implementation according to the interface docstrings.
-// You can change the syntax according to a language of your choice, feel free to use any helper methods or fields.
+/* 
+You're given an interface of a Dynamic Tree, 
+your task is to write an implementation 
+according to the interface docstrings.
+You can change the syntax 
+according to a language of your choice, 
+feel free to use any helper methods or fields. 
+*/
 
 // Implement the methods of the following Tree class.
 struct TreeNode {
@@ -25,7 +31,9 @@ class Tree {
     this->nodes.push_back(this->root_);
   }
 
-  // Creates a node that is attached to a parent node that is guaranteed to already exist in the Tree.
+  // Creates a node that is 
+  // attached to a parent node 
+  // that is guaranteed to already exist in the Tree.
   TreeNode* createNode(TreeNode* parent) {
     if (this->nodes.size() == capacity)
       return NULL;
@@ -36,7 +44,8 @@ class Tree {
     return tmp;
   }
 
-  // Returns a random node in the Tree. Each node in the Tree has an equal probability to be selected.
+  // Returns a random node in the Tree. 
+  // Each node in the Tree has an equal probability to be selected.
   TreeNode* getRandomNode() {
     // To be implemented.
     int currSize = this->nodes.size();

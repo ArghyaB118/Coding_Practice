@@ -102,6 +102,152 @@ vector<vector<int>> intervalIntersection2
 	return result;
 }
 
+
+/* LC#57
+
+You are given an array of non-overlapping intervals 
+where intervals[i] = [starti, endi] 
+represent the start and the end 
+of the ith interval and intervals is sorted 
+in ascending order by starti. 
+You are also given an interval 
+newInterval = [start, end] 
+that represents the start and end of another interval.
+
+Insert newInterval into intervals 
+such that intervals is still sorted in ascending order 
+by starti and intervals still 
+does not have any overlapping intervals 
+(merge overlapping intervals if necessary).
+
+Return intervals after the insertion.
+*/
+
+vector<vector<int>> insertIntervals
+(vector<vector<int>>& intervals, vector<int>& newInterval) {
+	if (intervals.size() == 0) {
+		intervals.push_back(newInterval);
+		return intervals;
+	}
+	else if (intervals.back()[1] < newInterval[0]) {
+        intervals.push_back(newInterval);
+        return intervals;
+    }
+    else if (intervals[0][0] > newInterval[1]) {
+        intervals.insert(intervals.begin(), newInterval);
+        return intervals;
+    }
+	int i = 0;
+	while (i < intervals.size()) {
+		if (intervals[i][1] >= newInterval[0]) {
+			vector<int> tmp = intervals[i];
+			tmp[0] = min(tmp[0], newInterval[0]);
+			tmp[1] = max(tmp[1], newInterval[1]);
+			intervals[i] = tmp;
+			break;
+		}
+		else
+			i++;
+	}
+	if (i == intervals.size() - 1)
+		return intervals;
+	int j = i + 1, count = 0;
+	while (intervals[j][0] <= intervals[i][1]) {
+		intervals[i][1] = max(intervals[i][1], intervals[j][1]);
+		j++; count++;
+	}
+	if (count == 0)
+		return intervals;
+	intervals.erase(intervals.begin() + i + 1, intervals.begin() + i + 1 + count);
+	return intervals;
+}
+
+vector<vector<int>> insertIntervalsBinarySearch
+(vector<vector<int>>& intervals, vector<int>& newInterval) {
+	if (intervals.size() == 0) {
+		intervals.push_back(newInterval);
+		return intervals;
+	}
+	else if (intervals.back()[1] < newInterval[0]) {
+        intervals.push_back(newInterval);
+        return intervals;
+    }
+    else if (intervals[0][0] > newInterval[1]) {
+        intervals.insert(intervals.begin(), newInterval);
+        return intervals;
+    }
+	int i = 0;
+	while (i < intervals.size()) {
+		if (intervals[i][1] >= newInterval[0]) {
+			vector<int> tmp = intervals[i];
+			tmp[0] = min(tmp[0], newInterval[0]);
+			tmp[1] = max(tmp[1], newInterval[1]);
+			intervals[i] = tmp;
+			break;
+		}
+		else
+			i++;
+	}
+	if (i == intervals.size() - 1)
+		return intervals;
+	int j = i + 1, count = 0;
+	while (intervals[j][0] <= intervals[i][1]) {
+		intervals[i][1] = max(intervals[i][1], intervals[j][1]);
+		j++; count++;
+	}
+	if (count == 0)
+		return intervals;
+	intervals.erase(intervals.begin() + i + 1, intervals.begin() + i + 1 + count);
+	return intervals;
+}
+
+
+/* LC#349
+
+Given two integer arrays nums1 and nums2, 
+return an array of their intersection. 
+Each element in the result must be unique 
+and you may return the result in any order.
+*/
+
+// beats ~50% LC users
+vector<int> intersection1(vector<int>& nums1, vector<int>& nums2) {
+    unordered_set<int> s1;
+    for (int &i : nums1)
+        s1.insert(i);
+    unordered_set<int> s2;
+    for (int &i : nums2) {
+        if (s1.find(i) != s1.end())
+            s2.insert(i);
+    }
+    vector<int> res = {};
+    for (auto &i : s2)
+        res.push_back(i);
+    return res;
+}
+
+// beats ~25% LC users
+vector<int> intersection2(vector<int>& nums1, vector<int>& nums2) {
+    unordered_set<int> s1, s2;
+    for (int &i : nums1)
+        s1.insert(i);
+    for (int &i : nums2)
+        s2.insert(i);
+
+	vector<int> res = {};
+    if (s1.size() <= s2.size()) {
+    	for (auto &i : s1)
+    		if (s2.find(i) != s2.end())
+    			res.push_back(i);
+    }
+    else {
+    	for (auto &i : s2)
+    		if (s1.find(i) != s1.end())
+    			res.push_back(i);
+    }
+    return res;
+}
+
 int main () {
 	vector<vector<int>> intervals1{{0,2},{5,10},{13,23},{24,25}};
     vector<vector<int>> intervals2{{1,5},{8,12},{15,24},{25,26}};
@@ -109,5 +255,6 @@ int main () {
     vector<vector<int>> result = intervalIntersection2 (intervals1, intervals2);
     for (auto i : result)
         cout << i[0] << " " << i[1] << endl;
+
 	return 0;
 }

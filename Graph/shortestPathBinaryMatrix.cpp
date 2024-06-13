@@ -13,6 +13,8 @@ All the adjacent cells of the path are 8-directionally connected
 (i.e., they are different and they share an edge or a corner).
 The length of a clear path is the number of visited cells of this path.
 */
+
+
 typedef pair<int, int> cell;
 
 void move8way (vector<vector<int>>& grid, queue<cell>& q, cell c, int n) {
@@ -52,7 +54,7 @@ void move8way (vector<vector<int>>& grid, queue<cell>& q, cell c, int n) {
 
 int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
 	int n = grid.size();
-	if (grid[0][0] == 1 || grid[n - 1][n - 1] == 0)
+	if (grid[0][0] == 1 || grid[n - 1][n - 1] == 1)
 		return -1;
 	queue<cell> q;
 	q.push({0, 0}); grid[0][0] = 1;
@@ -61,7 +63,7 @@ int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
 		if (c.first == n - 1 && c.second == n - 1)
 			return grid[n - 1][n - 1];
 		move8way(grid, q, c, n);
-		q.pop();
+        q.pop();
 	}
 	if (grid[n - 1][n - 1] == 0)
 		return -1;

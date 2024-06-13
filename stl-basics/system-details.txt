@@ -1,0 +1,22 @@
+
+$ lsb_release -a
+Linux Mint 20.1
+ulyssa
+
+$ uname -r
+5.15.0-1058-oracle
+
+$ g++ -v
+gcc version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2)
+
+kernel modules
+$ lsmod | grep "a specific module"
+
+c vs cpp
+procedure oriented vs object oriented
+no data hiding
+no function and operator overloading
+no function inside structures
+no templating -- pass data type as parameters
+
+type-casting -- change data types

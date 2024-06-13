@@ -110,6 +110,70 @@ bool areConsecutive (int arr[], int n) {
     return true;
 }
 
+
+/* LC#34
+
+Given an array of integers nums sorted 
+in non-decreasing order, 
+find the starting and ending position 
+of a given target value.
+
+If target is not found in the array, 
+return [-1, -1].
+
+You must write an algorithm with O(log n) 
+runtime complexity.
+*/
+
+int binary_search_first_elt (vector<int>& nums, int target) {
+    if (nums.size() == 0)
+        return -1;
+    else if (nums.size() == 1 && nums[0] == target)
+        return 0;
+    else if (nums.size() == 1 && nums[0] != target)
+        return -1;
+    int left = 0, right = nums.size() - 1;
+    while (left < right) {
+        if (right - left == 1 && nums[left] < target && nums[right] == target)
+            return right;
+        else if (right - left == 1 && nums[left] < target && nums[right] > target)
+            return -1;
+        int mid = (left + right) / 2;
+        if (nums[mid] < target)
+            left = mid;
+        else if (nums[mid] >= target)
+            right = mid;
+    }
+    return -1;
+}
+
+int binary_search_last_elt (vector<int>& nums, int target) {
+    if (nums.size() == 0)
+        return -1;
+    else if (nums.size() == 1 && nums[0] == target)
+        return 0;
+    else if (nums.size() == 1 && nums[0] != target)
+        return -1;
+    int left = 0, right = nums.size() - 1;
+    while (left < right) {
+        if (right - left == 1 && nums[left] == target && nums[right] > target)
+            return left;
+        else if (right - left == 1 && nums[left] < target && nums[right] > target)
+            return -1;
+        int mid = (left + right) / 2;
+        if (nums[mid] <= target)
+            left = mid;
+        else if (nums[mid] > target)
+            right = mid;
+    }
+    return -1;
+}
+
+vector<int> searchRange(vector<int>& nums, int target) {
+    return {binary_search_first_elt(nums, target), 
+    binary_search_last_elt(nums, target)};
+}
+
 int main () {
     int arr[]= {5, 4, 2, 5, 3, 1, 6, 6};
     int n = sizeof(arr) / sizeof(arr[0]);

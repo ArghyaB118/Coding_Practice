@@ -107,30 +107,6 @@ bool hasCycle2 (ListNode *head) {
     return false;
 }
 
-/*You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
- 
- You may assume the two numbers do not contain any leading zero, except the number 0 itself.*/
-
-ListNode* addTwoNumbers (ListNode* l1, ListNode* l2) {
-    int num1, num2;
-    while (l1 != NULL) {
-        num1 *= 10; num1 += l1->val;
-    }
-    while (l2 != NULL) {
-        num2 *= 10; num2 += l2->val;
-    }
-    num1 += num2;
-    stack<int> st;
-    while (num1 != 0) {
-        st.push(num1 % 10); num1 /= 10;
-    }
-    while (!st.empty()) {
-        cout << st.top() << endl; st.pop();
-    }
-    // ListNode* sum
-    return NULL;
-}
-
 /*
 You are given a singly-linked list that contains N integers. 
 A subpart of the list is a contiguous set of even elements, 
@@ -297,7 +273,34 @@ Input: lists = [[]]
 Output: []
 */
 
+// beats ~6% LC users
+ListNode* mergeKLists(vector<ListNode*>& lists) {
+	if (lists.size() == 0)
+        return NULL;
+    int n = lists.size();
+    ListNode* dummy = new ListNode(-1, NULL);
+    ListNode* head = dummy;
+    while (true) {
+    	int i = -1;
+    	for (int j = 0; j < n; j++) {
+    		if (lists[j] && i == -1)
+    			i = j;
+    		else if (lists[j] && i >= 0 && lists[j]->val < lists[i]->val)
+    			i = j;
+    	}
+    	if (i == -1)
+    		return dummy->next;
+    	else {
+    		// ListNode* node = new ListNode(lists[i]->val, NULL);
+    		head->next = lists[i]; // node;
+    		head = head->next;
+    		lists[i] = lists[i]->next;
+    	}
+    }
+    return dummy->next;
+}
 
+// beats ~25% LC users
 ListNode* mergeKLists(vector<ListNode*>& lists) {
     if (lists.size() == 0)
         return NULL;
@@ -343,6 +346,33 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
 }
 
 
+/* LC#203
+
+Given the head of a linked list 
+and an integer val, 
+remove all the nodes of the linked list 
+that has Node.val == val, 
+and return the new head.
+*/
+
+// beats ~88% LC users
+ListNode* removeElements(ListNode* head, int val) {
+    if (!head)
+		return head;
+	while (head && head->val == val)
+		head = head->next;
+	if (!head)
+		return head;
+	ListNode* node = head;
+	while (node->next) {
+		if (node->next->val != val)
+			node = node->next;
+		else
+			node->next = node->next->next;
+	}
+	return head;
+}
+
 
 // https://www.geeksforgeeks.org/reverse-a-linked-list/
 ListNode* reverseList(ListNode* head) {
@@ -387,6 +417,90 @@ void swapNode(int x, int y) {
     Node *temp = currY->next;
     currY->next = currX->next;
     currX->next = temp;
+}
+
+/* LC#19
+
+Given the head of a linked list, 
+remove the nth node 
+from the end of the list 
+and return its head.
+
+Constraints:
+The number of nodes in the list is sz.
+1 <= sz <= 30
+0 <= Node.val <= 100
+1 <= n <= sz
+ 
+Follow up: Could you do this in one pass?
+*/
+
+// beats ~70% LC users
+ListNode* removeNthFromEnd(ListNode* head, int n) {
+	if (!head)
+		return NULL;
+	vector<ListNode*> nodes;
+	while (head) {
+		nodes.push_back(head);
+		head = head->next;
+	}
+	int count = nodes.size();
+	int remove = (count - 1) - (n - 1);
+	if (remove == 0 && count == 1)
+		return NULL;
+	else if (remove == 0 && count > 1)
+		return nodes[1];
+	else if (remove == count - 1) {
+		nodes[count - 2]->next = NULL;
+		return nodes[0];
+	}
+	
+	nodes[remove - 1]->next = nodes[remove + 1];
+	return nodes[0];
+}
+
+/* LC#92
+
+Given the head of a singly linked list 
+and two integers left and right 
+where left <= right, 
+reverse the nodes of the list 
+from position left to position right, 
+and return the reversed list.
+*/
+
+// beats ~100% LC users
+ListNode* reverseBetween(ListNode* head, int left, int right) {
+    if (left == right)
+		return head;
+
+	ListNode* dummy = new ListNode(0, head);
+
+	ListNode* leftnode = dummy;
+	if (left > 1) {
+		for (int i = 0; i < left - 1; i++) {
+			leftnode = leftnode->next;
+		}
+	}
+	
+	ListNode* tmp = leftnode->next;
+	stack<ListNode*> st;
+	for (int i = 0; i < right - left + 1; i++) {
+		st.push(tmp);
+		tmp = tmp->next;
+	}
+
+	ListNode* rightnode = tmp;
+	tmp = leftnode;
+
+	while (!st.empty()) {
+		tmp->next = st.top();
+		tmp = st.top();
+		st.pop();
+	}
+	tmp->next = rightnode;
+
+	return dummy->next;
 }
 
 int main() {

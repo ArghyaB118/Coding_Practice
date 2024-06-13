@@ -1,6 +1,21 @@
-/*You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
+/* LC#2
+
+You are given two non-empty linked lists 
+representing two non-negative integers. 
+The digits are stored in reverse order, 
+and each of their nodes contains a single digit. 
+Add the two numbers 
+and return the sum as a linked list.
  
- You may assume the two numbers do not contain any leading zero, except the number 0 itself.*/
+You may assume the two numbers 
+do not contain any leading zero, 
+except the number 0 itself.
+
+Constraints:
+The number of nodes in each linked list 
+is in the range [1, 100].
+*/
+
 
 #include <stdio.h>
 #include <iostream>
@@ -23,7 +38,73 @@ struct ListNode* push (struct ListNode **head, int val) {
     return node;
 }
 
+// does not work for large numbers
 ListNode* addTwoNumbers (ListNode* l1, ListNode* l2) {
+    int num1 = 0, num2 = 0;
+    int i = 1;
+    while (l1 != NULL) {
+        num1 += i * l1->val;
+        i *= 10;
+        l1 = l1->next;
+    }
+    i = 1;
+    while (l2 != NULL) {
+        num2 += i * l2->val;
+        i *= 10;
+        l2 = l2->next;
+    }
+    num1 += num2;
+    ListNode* root = new ListNode(num1 % 10);
+    num1 /= 10;
+    ListNode* node = root;
+    while (num1) {
+        ListNode* tmp = new ListNode(num1 % 10);
+        num1 /= 10;
+        node->next = tmp;
+        node = node->next;
+    }
+    return root;
+}
+
+// beats ~64% LC users
+ListNode* addTwoNumbersLarge (ListNode* l1, ListNode* l2) {
+    int num = 0, carry = 0;
+    if (l1) {
+        num += l1->val;
+        l1 = l1->next;
+    }
+    if (l2) {
+        num += l2->val;
+        l2 = l2->next;
+    }
+    ListNode* root = new ListNode(num % 10);
+    carry = num / 10;
+    ListNode* node = root;
+    while (l1 != NULL || l2 != NULL) {
+        num = 0;
+        if (l1) {
+            num += l1->val;
+            l1 = l1->next;
+        }
+        if (l2) {
+            num += l2->val;
+            l2 = l2->next;
+        }
+        num += carry;
+        ListNode* tmp = new ListNode(num % 10);
+        node->next = tmp;
+        node = node->next;
+        carry = num / 10;
+    }
+    if (carry > 0) {
+        ListNode* tmp = new ListNode(carry);
+        node->next = tmp;
+    }
+    return root;
+}
+
+
+ListNode* addTwoNumbersOld (ListNode* l1, ListNode* l2) {
     int num1 = 0, num2 = 0;
     while (l1 != NULL) {
         num1 *= 10; num1 += l1->val; l1 = l1->next;

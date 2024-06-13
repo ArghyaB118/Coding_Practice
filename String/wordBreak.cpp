@@ -42,7 +42,8 @@ bool wordBreak(string s, vector<string>& wordDict) {
 	return dp[s.length() - 1];        
 }
 
-/*
+/* LC#140
+
 Given a string s and a dictionary of strings wordDict, 
 add spaces in s to construct a sentence where each word 
 is a valid dictionary word. Return all such possible sentences in any order.
@@ -79,6 +80,53 @@ vector<string> wordBreakSpace (string s, vector<string>& wordDict) {
 
 	vector<string> result; 
 	result.push_back(wordBreakSpaceUtil(s, dict, result));
+}
+
+// this is the final solution
+vector<string> wordBreak(string s, vector<string>& wordDict) {
+	// set of words in dictionary
+	// O(m)
+	unordered_set<string> dictionary (wordDict.begin(), wordDict.end());
+	// stores the word boundaries
+	// with key = starting index
+	// and value = every possible end index
+	// O(n ^ 2)
+	unordered_map<int, vector<int>> boundaries;
+	for (int i = 0; i < s.length(); i++) {
+		for (int j = 1; j <= s.length() - i; j++) {
+			if (dictionary.find(s.substr(i, j)) != dictionary.end()) {
+				if (boundaries.find(i) == boundaries.end())
+					boundaries[i] = {j - 1};
+				else
+					boundaries[i].push_back(j - 1);
+			}
+		}
+	}
+	vector<string> result;
+	queue<vector<int>> q;
+	for (auto &i : boundaries[0])
+		q.push({0, i});
+	// O(n * m)
+	while (!q.empty()) {
+		vector<int> tmp = q.front();
+		q.pop();
+		if (tmp.back() == s.length() - 1) {
+			string s1 = "";
+			for (int i = 0; i < tmp.length(); i += 2) {
+				s1 += s.substr(tmp[i], tmp[i + 1] - tmp[i] + 1);
+				s1 += " ";
+			}
+			s1.pop_back();
+			result.push_back(s1);
+		}
+		else {
+			for (auto &i : boundaries[tmp.back() + 1]) {
+				vector<int> tmp2 = tmp;
+				tmp2.push_back(tmp.back() + 1, i);
+				q.push(tmp2);
+			}
+		}
+	}
 }
 
 int main () {

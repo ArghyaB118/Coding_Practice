@@ -30,6 +30,7 @@ Return
 #include <vector>
 using namespace std;
 
+// beats ~30% LC users
 class TicTacToe {
 private:
     int n;
@@ -43,22 +44,37 @@ public:
     }
     
     int winnercheck () {
-        int x;
-        for (int i = 0; i < n; i++) {
-            x = mat[i][0];
-            vector<int> tmp(n, x);
-            if (mat[i] == tmp)
-                return x;
-        }
-        x = mat[0][0];
+        // row check
+        int x = mat[0][0];
         bool ret = true;
         for (int i = 0; i < n; i++) {
-            if (mat[i][i] != x) {
-                ret = false;
-                break;
+            x = mat[i][0];
+            ret = true;
+            if (x != 0) {
+                for (int j = 0; j < n; j++) {
+                    if (mat[i][j] != x) {
+                        ret = false;
+                        break;
+                    }
+                }
+                if (ret) { return x; }
             }
         }
-        if (ret) { cout << "here" << endl; return x; }
+        // cout << "x" << endl;
+        // diagonal check
+        x = mat[0][0];
+        ret = true;
+        if (x > 0) {
+            for (int i = 0; i < n; i++) {
+                if (mat[i][i] != x) {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+        if (ret && x != 0) { return x; }
+        // cout << "y" << endl;
+        // reverse diagonal check
         x = mat[n - 1][0];
         ret = true;
         for (int i = 0; i < n; i++) {
@@ -67,20 +83,26 @@ public:
                 break;
             }
         }
-        if (ret) { cout << "here" << endl; return x; }
+        if (ret && x != 0) { return x; }
+        // cout << "z" << endl;
+        // column check
         for (int i = 0; i < n; i++) {
             x = mat[0][i];
             ret = true;
-            for (int j = 0; j < n; j++) {
-                if (mat[j][i] != x) {
-                    ret = false;
-                    break;
+            if (x != 0) {
+                for (int j = 0; j < n; j++) {
+                    if (mat[j][i] != x) {
+                        ret = false;
+                        break;
+                    }
                 }
-                if (ret) { cout << "here" << endl; return x; }
+                if (ret) { return x; }
             }
         }
+        // cout << "p" << endl;
         return 0;
     }
+    
     
     int move(int row, int col, int player) {
         mat[row][col] = player;

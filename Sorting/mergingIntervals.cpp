@@ -48,11 +48,12 @@ vector<vector<int>> merge (vector<vector<int>>& intervals) {
 // Although this is more simplified as a code, 
 // but using only vector is not a good idea in terms of performance.
 // Cost = O(sort) + O(n) = O(n log n)
+// beats ~48% LC users
 vector<vector<int>> merge2 (vector<vector<int>>& intervals) {
     sort(intervals.begin(), intervals.end());
     vector<vector<int>> result;
-    for (auto i : intervals)
-        cout << i[0] << " " << i[1] << endl;
+    //for (auto i : intervals)
+    //    cout << i[0] << " " << i[1] << endl;
     for (auto i : intervals) {
         if (result.empty())
             result.push_back(i);
@@ -123,6 +124,44 @@ vector<vector<int>> mergeIntervalLists
 	}
 	reverse(result.begin(), result.end());
 	return result;
+}
+
+/* LC#435
+
+Given an array of intervals intervals 
+where intervals[i] = [starti, endi], 
+return the minimum number of intervals 
+you need to remove to make the rest 
+of the intervals non-overlapping.
+*/
+
+// beats ~70% LC users
+int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+	if (intervals.empty())
+		return 0;
+	else if (intervals.size() == 1)
+		return 0;
+	sort(intervals.begin(), intervals.end());
+	stack<vector<int>> st;
+	st.push(intervals[0]);
+	int j = 1, count = 0;
+	while (!st.empty() && j < intervals.size()) {
+		if (st.top()[1] <= intervals[j][0]) {
+			st.push(intervals[j]);
+			j++;
+		}
+		else if (st.top()[1] > intervals[j][1]) {
+			st.pop();
+			count++;
+			st.push(intervals[j]);
+			j++;
+		}
+		else if (st.top()[1] <= intervals[j][1]) {
+			count++;
+			j++;
+		}
+	}
+	return count;
 }
 
 int main () {

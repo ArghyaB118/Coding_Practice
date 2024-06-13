@@ -10,51 +10,28 @@ of the sum of the digits of x.
 #include <string>
 using namespace std;
 
-int superDigitUtil (int n) {
-	if (n < 10)
-		return n;
-	int num = 0;
-	while (n > 0) {
-		num += n % 10;
-		n /= 10;
-	}
-	return num;
+unsigned long long superDigitUtil (unsigned long long n) {
+    if (n < 10)
+        return n;
+    unsigned long long num = 0;
+    while (n > 0) {
+        num += n % 10;
+        n /= 10;
+    }
+    return num;
 }
 
-int superDigit (string n, int k) {
-	int sum = 0;
-	for (auto &ch : n) {
-		sum += (int)ch - (int)'0';
-	}
-	sum *= k;
-	/*while (sum > 9) {
-		int tmp = 0;
-		while (sum > 0) {
-			tmp += sum % 10;
-			sum /= 10;
-		}
-		if (tmp <= 9)
-			return tmp;
-		sum = tmp;
-	}*/
-	/*if (sum <= 9)
-		return sum;
-	int tmp_sum = 0;
-	while (sum > 0) {
-		tmp_sum += sum % 10;
-		sum /= 10;
-		if (sum == 0 && tmp_sum <= 9)
-			return tmp_sum;
-		else if (sum == 0 && tmp_sum > 9) {
-			sum = tmp_sum;
-			tmp_sum = 0;
-		}
-	}	
-	return sum;*/
-	while (sum > 9) {
-		sum = superDigitUtil (sum);
-	}
-	return sum;
+int superDigit(string n, int k) {
+    unsigned long long sum = 0;
+    for (auto &ch : n) {
+        sum += (int)ch - (int)'0';
+    }
+    sum *= k;
+    while (sum > 9) {
+        sum = superDigitUtil (sum);
+    }
+    cout << sum << endl;
+    return (int)sum;
 }
 
 int main () {

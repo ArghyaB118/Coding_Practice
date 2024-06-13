@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
 using namespace std;
 typedef pair<int, int> interval;
 
@@ -52,9 +53,47 @@ int mostBooked (int n, vector<vector<int>>& meetings) {
     return index;
 }
 
+/* LC#253
+
+Given an array of meeting time intervals intervals 
+where intervals[i] = [starti, endi], 
+return the minimum number of conference rooms required.
+*/
+
+struct cmp {
+    bool operator() (vector<int> &a, vector<int> &b) {
+        return a[1] > b[1];
+    }
+};
+
+// beats ~88% LC users
+int minMeetingRooms(vector<vector<int>>& intervals) {
+    int count = 0;
+    sort(intervals.begin(), intervals.end());
+    priority_queue<vector<int>, vector<vector<int>>, cmp> pq;
+    for (auto &i : intervals) {
+        if (pq.empty())
+            pq.push(i);
+        else if (pq.top()[1] > i[0])
+            pq.push(i);
+        else {
+            while (!pq.empty() && pq.top()[1] <= i[0]) {
+                pq.pop();
+            }
+            pq.push(i);
+        }
+        count = max(count, (int)pq.size());
+    }
+    return count;
+}
+
 int main () {
     int n = 2;
     vector<vector<int>> meetings = {{0,10},{1,5},{2,7},{3,4}};
     cout << mostBooked(n, meetings) << endl;
+
+
+    vector<vector<int>> intervals = {{0,30},{5,10},{15,20}};
+    cout << minMeetingRooms(intervals) << endl;
     return 0;
 }

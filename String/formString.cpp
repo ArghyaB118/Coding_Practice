@@ -1,20 +1,33 @@
 /* LC#1055
  
- A subsequence of a string is a new string that is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (i.e., "ace" is a subsequence of "abcde" while "aec" is not).
+ A subsequence of a string is a new string 
+ that is formed from the original string 
+ by deleting some (can be none) of the characters 
+ without disturbing the relative positions 
+ of the remaining characters. 
+ (i.e., "ace" is a subsequence 
+ of "abcde" while "aec" is not).
  
- Given two strings source and target, return the minimum number of subsequences of source such that their concatenation equals target. If the task is impossible, return -1.
+ Given two strings source and target, 
+ return the minimum number of subsequences 
+ of source such that their concatenation equals target. 
+ If the task is impossible, return -1.
  
  Input: source = "abc", target = "abcbc"
  Output: 2
- Explanation: The target "abcbc" can be formed by "abc" and "bc", which are subsequences of source "abc".
+ Explanation: The target "abcbc" can be formed by "abc" and "bc", 
+ which are subsequences of source "abc".
  
  Input: source = "abc", target = "acdbc"
  Output: -1
- Explanation: The target string cannot be constructed from the subsequences of source string due to the character "d" in target string.
+ Explanation: The target string cannot be constructed 
+ from the subsequences of source string 
+ due to the character "d" in target string.
  
  Input: source = "xyz", target = "xzyxz"
  Output: 3
- Explanation: The target string can be constructed as follows "xz" + "y" + "xz".
+ Explanation: The target string can be constructed 
+ as follows "xz" + "y" + "xz".
  */
 
 #include <iostream>
@@ -67,6 +80,37 @@ int shortestWayOpt (string source, string target) {
         num++;
     }
     return num;
+}
+
+/* LC#1768
+
+You are given two strings word1 and word2. 
+Merge the strings by adding letters in alternating order, 
+starting with word1. 
+If a string is longer than the other, 
+append the additional letters 
+onto the end of the merged string.
+
+Return the merged string.
+*/
+
+// beats 100% LC users
+string mergeAlternately(string word1, string word2) {
+    string result = "";
+    int m = word1.length(), n = word2.length();
+    int i = 0, j = 0;
+    while (i < m && j < n) {
+        result.push_back(word1[i]);
+        result.push_back(word2[j]);
+        i++; j++;
+    }
+    while (i < m) {
+        result.push_back(word1[i]); i++;
+    }
+    while (j < n) {
+        result.push_back(word2[j]); j++;
+    }
+    return result;
 }
 
 int main () {

@@ -1,4 +1,5 @@
-/*
+/* LC#1891
+
 Cutting Ribbons
 
 You are given an integer array ribbons, 
@@ -40,9 +41,14 @@ bool possibleCut (vector<int>& ribbons, int k, int length) {
 	return (count < k) ? false : true;
 }
 
-
+// beats ~75% LC users
 int maxLengthRibbon(vector<int>& ribbons, int k) {
-	int max = accumulate(ribbons.begin(), ribbons.end(), 0) / k, min = 1, result;
+	unsigned long long total_length = 0;
+    for (auto &i : ribbons)
+        total_length += i;
+	int max = total_length / k, min = 1, result;
+	// signed interger overflow
+	// int max = accumulate(ribbons.begin(), ribbons.end(), 0) / k, min = 1, result;
 	if (max <= min)
 		return max;
 	while(min <= max) {

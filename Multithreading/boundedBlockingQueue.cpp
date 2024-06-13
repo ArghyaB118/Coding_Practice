@@ -32,6 +32,7 @@ using namespace std;
 
 vector<int> arr = {1, 2, 3, 4, 5, 6};
 
+// beats ~70% LC users
 class BoundedBlockingQueue {
 private:
     queue<int> q;
@@ -78,6 +79,7 @@ void thread_dequeue (BoundedBlockingQueue b) {
         b.dequeue();
 }
 
+// beats ~25% LC users
 class BoundedBlockingQueue2 {
 private:
     queue<int> q;

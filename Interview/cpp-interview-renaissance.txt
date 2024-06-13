@@ -1,0 +1,92 @@
+Clue:
+1. memory management
+- dynamic memory allocation and deallocation
+- mmap and other other related system calls
+- data types, their sizeof(), and largest/smallest number they can hold
+- data types like size_t, pid_t, time_t
+
+2. About time() and ctime library in general
+3. STL containers
+- O(1) randomized accesses
+- move constructor 
+- move and copy assignment operator
+
+Q. float* p = new float[12]
+A. dynamically allocates memory for an array of 12 floating-point numbers and assigns the address of the first element of the array to the pointer variable p.
+
+Q. Total size of memory?
+A. total size of memory allocated = 12 * 4 bytes = 48 bytes
+
+Q. Where does this memory get allocated from? 
+A. In C++, when you use new to dynamically allocate memory, the memory is typically allocated from the heap. The heap is a region of the computer's memory that is used for dynamic memory allocation during program execution. It's different from the stack, which is used for storing local variables and function call information.
+
+It's important to note that when you use new to allocate memory, you are responsible for deallocating that memory when it's no longer needed.
+
+Q. How to deallocate this memory?
+A. delete[] p
+
+Q. What if you miss out the []? So, if you just write `delete p`?
+A. Using delete p on a pointer that was allocated with new[] can result in memory leaks or corrupting the heap. This is because delete expects a pointer to a single object allocated with new, not an array.
+
+Q. What is the system call that may happen during dynamic memory allocation using new?
+A. On Linux systems, this memory allocation function might use system calls like brk() or sbrk() to extend the program's data segment (brk/sbrk model) or use mmap() for larger allocations or special cases.
+
+
+Q. what is the smallest positive number that can be represented by a double?
+A. A double x is 8 bytes = 8 * 8 = 64 bits. 
+sign bit = 1
+exponent bit = 11
+mantissa = 52
+For a normalized number (with higher precision),: (-1)^sign + 1.mantissa * 2^exponent
+A double can hold up to 2^-1022 = 2.225 * 10^-308
+
+Q. What are the STL containers with O(1) randomized accesses?
+A. unordered_set and unordered_map
+basically talk about how by using hash set, they can achieve a randomized accesses (inserts, find, etc.) in constant-time amortized (maybe, make sure that it is not worst-case).
+
+Q. What is the return type in time() function?
+A. time_t, necessarily it is the return value of std::time() is the current system time, measured in seconds since the Unix epoch (January 1, 1970, 00:00:00 UTC). If an error occurs, the function returns -1.
+This is an arithmetic type defined in the <ctime>.
+
+Q. How to understand the details of date, year, and other details from the returned value?
+A. std::tm* timeInfo = std::gmtime(&currentTime); // Convert to UTC time
+   if (timeInfo != nullptr) {
+   	timeInfo->tm_year + 1900 << '-' // Years since 1900
+    timeInfo->tm_mon + 1 << '-'     // Months (0-11)
+    timeInfo->tm_mday << ' '        // Day of the month (1-31)
+    timeInfo->tm_hour << ':'        // Hours (0-23)
+    timeInfo->tm_min << ':'         // Minutes (0-59)
+    timeInfo->tm_sec << std::endl;  // Seconds (0-59)
+   }
+   std::tm* timeInfo = std::localtime(&currentTime); // Convert to local time
+Also, the details of std::chrono can be talked about instead of the above approach.
+
+Q. What does fork() do?
+A. fork is used to create new process. It returns the pid_t, which is an integer type specifically used for process IDs (pid). If fork() fails, -1 is returned to the parent process, indicating an error.
+
+Q. how to create a move constructor and a move assignment operator, for a given class as follows:
+class Unixfile {
+	int fd;
+	Unixfile() { fd = -1; }
+	~Unixfile() {
+		if (fd != -1)
+			close(fd);
+	}	
+};
+A. 
+// Move constructor
+Unixfile(Unixfile&& other) noexcept : fd(other.fd) {
+    close(other.fd);
+    other.fd = -1; // Reset the source object's file descriptor
+}
+// Move assignment operator
+Unixfile& operator=(Unixfile&& other) noexcept {
+    if (this != &other) {
+        if (fd != -1)
+            close(fd);
+        fd = other.fd;
+        close(other.fd);
+        other.fd = -1; // Reset the source object's file descriptor
+    }
+    return *this;
+}

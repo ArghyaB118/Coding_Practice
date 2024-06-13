@@ -100,6 +100,71 @@ bool isToeplitzMatrix(vector<vector<int>>& matrix) {
 	return true;
 }
 
+/* LC#1424
+
+Given a 2D integer array nums, 
+return all elements of nums 
+in diagonal.
+*/
+
+// TLE!
+vector<int> findDiagonalOrder(vector<vector<int>>& nums) {
+	int n = nums.size();
+	int size = 0;
+	vector<int> result;
+	for (int i = 0; i < n; i++) {
+		size += nums[i].size();
+		int row = i, col = 0;
+		while (row >= 0) {
+			if (nums[row].size() > col)
+				result.push_back(nums[row][col]);
+			row--; col++;
+		}
+	}
+	int j = 1;
+	while (result.size() < size) {
+		int row = n - 1, col = j;
+		j++;
+		while (row >= 0) {
+			if (nums[row].size() > col)
+				result.push_back(nums[row][col]);
+			row--; col++;
+		}
+	}
+	return result;
+}
+
+// slight improvement
+// still TLE
+vector<int> findDiagonalOrder2(vector<vector<int>>& nums) {
+	int n = nums.size();
+	int size = 0;
+	vector<int> result;
+    vector<int> colsize(n, 0);
+	for (int i = 0; i < n; i++) {
+        int s = nums[i].size();
+		size += s;
+        colsize[i] = s;
+		int row = i, col = 0;
+		while (row >= 0) {
+			if (colsize[row] > col)
+				result.push_back(nums[row][col]);
+			row--; col++;
+		}
+	}
+	int j = 1;
+	while (result.size() < size) {
+		int row = n - 1, col = j;
+		j++;
+		while (row >= 0) {
+			if (colsize[row] > col)
+				result.push_back(nums[row][col]);
+			row--; col++;
+		}
+	}
+	return result;
+}
+
 int main () {
 	vector<vector<int>> mat = {{1,2,3}, {4,5,6}, {7,8,9}};
 	vector<int> v = findDiagonalOrder(mat);

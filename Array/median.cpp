@@ -80,6 +80,125 @@ double findMedianSortedArrays (vector<int>& nums1, vector<int>& nums2) {
 }
 
 
+/* LC#295
+
+The median is the middle value 
+in an ordered integer list. 
+If the size of the list is even, 
+there is no middle value, 
+and the median is the mean 
+of the two middle values.
+*/
+
+class MedianFinder {
+    vector<int> v;
+public:
+    MedianFinder() {
+        this->v = {};
+    }
+    
+    void addNum(int num) {
+        this->v.push_back(num);
+    }
+    
+    double findMedian() {
+        sort(this->v.begin(), this->v.end());
+        int n = this->v.size();
+        if (n % 2 != 0)
+            return this->v[n / 2];
+        else
+            return ((double)this->v[n / 2 - 1] + (double)this->v[n / 2]) / 2;
+    }
+};
+
+class MedianFinder {
+    map<int, int> counts;
+    int count;
+public:
+    MedianFinder() {
+    	this->count = 0;
+    	counts.clear();
+    }
+    
+    void addNum(int num) {
+        this->counts[num]++;
+        count++;
+    }
+    
+    double findMedian() {
+        if (this->count == 0)
+            return -1;
+        else if (this->count == 1)
+            return counts.begin()->first;
+        else if (this->count == 2) {
+            double ans = (counts.begin()->first+ counts.rbegin()->first);
+            cout << counts.begin()->first << counts.end()->first << endl;
+            return ans / 2;
+        }
+
+    	int cumulative_count = 0;
+    	if (this->count % 2 != 0) {
+    		for (auto& i : this->counts) {
+    			cumulative_count += i.second;
+    			if (cumulative_count > this->count / 2)
+    				return i.first;
+    		}
+    	}
+    	else {
+    		double tmp = 0;
+    		for (auto& i : this->counts) {
+    			cumulative_count += i.second;
+    			if (cumulative_count >= this->count / 2 + 1) {
+                    if (tmp == 0)
+                        return i.first;
+                    else {
+                        tmp += i.first;
+                        return tmp / 2;
+                    }
+                }
+    			else if (cumulative_count == this->count / 2)
+    				tmp = i.first;
+            }
+    	}
+        return -1;
+    }
+};
+
+class MedianFinder {
+    priority_queue<int> minHeap;
+    priority_queue<int, vector<int>, gerater<int>> maxHeap;
+public:
+    MedianFinder() {
+        minHeap.clear(); maxHeap.clear();
+    }
+    
+    void addNum(int num) {
+    	if (maxHeap.size() >= minHeap.size() && maxHeap.top() <= num)
+    		minHeap.push(num);
+    	else if (maxHeap.size() >= minHeap.size() && maxHeap.top() > num) {
+    		int tmp = maxHeap.top();
+    		maxHeap.push(num);
+    		minHeap.push(tmp);
+    	}
+    	else if (maxHeap.size() < minHeap.size() && maxHeap.top() >= num)
+    		maxHeap.push(num);
+    	else if (maxHeap.size() < minHeap.size() && minHeap.top() < num) {
+    		int tmp = maxHeap.top();
+    		maxHeap.push(num);
+    		minHeap.push(tmp);
+    	}
+    }
+    
+    double findMedian() {
+        sort(this->v.begin(), this->v.end());
+        int n = this->v.size();
+        if (n % 2 != 0)
+            return this->v[n / 2];
+        else
+            return ((double)this->v[n / 2 - 1] + (double)this->v[n / 2]) / 2;
+    }
+};
+
 int main() {
 	vector<int> nums1{1,2,3,4,5};
 	vector<int> nums2{2,3,5,7};

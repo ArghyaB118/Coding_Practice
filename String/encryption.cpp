@@ -53,51 +53,8 @@ string findEncryptedWord(string s) {
   return c;
 }
 
-
-/*
-To decode an encoded message, all the digits must be grouped then mapped 
-back into letters using the reverse of the mapping above (there may be multiple ways). 
-For example, "11106" can be mapped into:
-'A' -> "1"
-'B' -> "2"
-...
-'Z' -> "26"
-"AAJF" with the grouping (1 1 10 6)
-"KJF" with the grouping (11 10 6)
-Note that the grouping (1 11 06) is invalid because "06" cannot be mapped 
-into 'F' since "6" is different from "06".
-
-Given a string s containing only digits, return the number of ways to decode it.
-
-The test cases are generated so that the answer fits in a 32-bit integer.
-*/
-
 // KJF -> 11 10 6 -> 2 
-int numDecodings(string s) {
-  vector<int> encrypted;
-  for (int i = 0; i < s.length(); i++) {
-    encrypted.push_back(int(s[i]) - 64);
-  }
-  int dp[encrypted.size()];
-  dp[0] = (encrypted[0] > 10) ? 2 : 1;
-  if (encrypted.size() == 1)
-    return dp[0];
-  else {
-    for (int i = 1; i < encrypted.size(); i++) {
-      if (encrypted[i] <= 10)
-        dp[i] = dp[i - 1];
-      else {
-        if (encrypted[i - 1] < 10)
-          dp[i] = dp[i - 1] + 2;
-        else if (encrypted[i - 1] == 10)
-          dp[i] = dp[i - 1] + 1;
-        else
-          dp[i] = dp[i - 1] + 2;
-      }
-    }
-  }  
-  return dp[encrypted.size() - 1];
-}
+
 
 // These are the tests we use to determine if the solution is correct.
 // You can add your own at the bottom.
@@ -123,6 +80,53 @@ void check(string& expected, string& output) {
     cout << endl; 
   }
   test_case_number++;
+}
+
+
+/* LC#953
+
+In an alien language, surprisingly, 
+they also use English lowercase letters, 
+but possibly in a different order. 
+The order of the alphabet is 
+some permutation of lowercase letters.
+
+Given a sequence of words written 
+in the alien language, 
+and the order of the alphabet, 
+return true if and only if 
+the given words are sorted lexicographically 
+in this alien language.
+*/
+
+// beats ~25% LC users
+bool check_order (string word1, string word2, unordered_map<char, int>& char_order) {
+  for (int i = 0; i < min(word1.length(), word2.length()); i++) {
+    if (char_order[word1[i]] < char_order[word2[i]])
+      return true;
+    else if (char_order[word1[i]] > char_order[word2[i]])
+      return false;
+  }
+  if (word1.length() > word2.length())
+    return false;
+  return true;
+}
+
+bool isAlienSorted(vector<string>& words, string order) {
+  unordered_map<char, int> char_order;
+  int i = 0;
+  for (auto &ch : order) {
+    char_order[ch] = i; i++;
+  }
+  if (words.size() == 0 || words.size() == 1)
+    return true;
+
+  for (int i = 1; i < words.size(); i++) {
+    if (!check_order(words[i], words[i - 1], char_order))
+      return false;
+  }
+
+  return true;
 }
 
 int main() {

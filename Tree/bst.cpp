@@ -221,6 +221,7 @@ return the value in the BST that is closest to the target.
 If there are multiple answers, print the smallest.
 */
 
+// beats ~41% LC users
 int closestValue(Node* root, double target) {
 	if (!root) { return 0; }
 	if (!root->left && !root->right) {return root->data; }
@@ -231,7 +232,8 @@ int closestValue(Node* root, double target) {
 		q.pop();
 		if (abs(closest_value - target) > abs(tmp->data - target))
 			closest_value = tmp->data;
-		else if (abs(closest_value - target) == abs(tmp->data - target) && tmp->data < closest_value)
+		else if (abs(closest_value - target) == abs(tmp->data - target) 
+			&& tmp->data < closest_value)
 			closest_value = tmp->data;
 		if (tmp->data == target)
 			return target;
@@ -243,6 +245,49 @@ int closestValue(Node* root, double target) {
 	return closest_value;
 }
 
+/* LC#1382
+
+Given the root of a binary search tree, 
+return a balanced binary search tree 
+with the same node values. 
+If there is more than one answer, 
+return any of them.
+
+A binary search tree is balanced 
+if the depth of the two subtrees 
+of every node never differs by more than 1.
+*/
+
+// beats ~62% LC users
+void do_inorder(TreeNode* node, vector<int>& inorder) {
+	if (node->left) { do_inorder(node->left, inorder); }
+	inorder.push_back(node->val);
+	if (node->right) { do_inorder(node->right, inorder); }
+}
+
+TreeNode* build_from_inorder (vector<int>& inorder, int left, int right) {
+	if (left == right) {
+		TreeNode* node = new TreeNode(inorder[left]);
+		return node;
+	}
+	else if (right - left == 1) {
+		TreeNode* node = new TreeNode(inorder[left]);
+		node->right = new TreeNode(inorder[right]);
+        return node;
+	}
+	int mid = (left + right) / 2;
+	TreeNode* node = new TreeNode(inorder[mid]);
+	node->left = build_from_inorder(inorder, left, mid - 1);
+	node->right = build_from_inorder(inorder, mid + 1, right);
+	return node;
+}
+
+TreeNode* balanceBST(TreeNode* root) {
+	vector<int> inorder;
+	do_inorder (root, inorder);
+	TreeNode* head = build_from_inorder(inorder, 0, inorder.size() - 1);
+	return head;
+}
 int main() {
 	struct Node *root = new Node(30);
 	root->left = new Node(20);

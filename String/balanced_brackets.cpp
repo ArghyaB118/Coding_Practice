@@ -200,7 +200,7 @@ string minRemoveToMakeValid (string s) {
     return s;
 }
 
-
+// beats ~30% LC users
 string minRemoveToMakeValidOptimized (string s) {
     stack<int> st;
     for (int i = 0; i < s.length(); i++) {
@@ -218,11 +218,17 @@ string minRemoveToMakeValidOptimized (string s) {
         }
     }
     
+    unordered_set<int> index_for_deletion;
     while (!st.empty()) {
-        s.erase(s.begin() + st.top());
+        index_for_deletion.insert(st.top());
         st.pop();
     }
-    return s;
+    string res = "";
+    for (int i = 0; i < s.length(); i++) {
+        if (index_for_deletion.find(i) == index_for_deletion.end())
+            res.push_back(s[i]);
+    }
+    return res;
 }
 
 /*
@@ -269,6 +275,7 @@ int minAddToMakeValid(string s) {
     return st.size();
 }
 
+// beats ~50% LC users
 int minAddToMakeValidOptimized (string s) {
     int open = 0, count = 0;
     for (int i = 0; i < s.length(); i++) {
@@ -278,6 +285,111 @@ int minAddToMakeValidOptimized (string s) {
     }
     count += open;
     return count;
+}
+
+/* LC#1541
+
+Given a parentheses string s containing only the characters '(' and ')'. 
+A parentheses string is balanced if:
+
+Any left parenthesis '(' must have a corresponding 
+two consecutive right parenthesis '))'.
+Left parenthesis '(' must go before the corresponding 
+two consecutive right parenthesis '))'.
+In other words, we treat '(' as an opening parenthesis 
+and '))' as a closing parenthesis.
+
+For example, "())", "())(())))" and "(())())))" are balanced, 
+")()", "()))" and "(()))" are not balanced.
+You can insert the characters '(' and ')' at any position 
+of the string to balance it if needed.
+
+Return the minimum number of insertions needed to make s balanced.
+*/
+
+int minInsertions(string s) {
+    stack<char> st;
+    int count = 0, i = 0;
+    while (i < s.length()) {
+        if (s[i] == '(' && (st.empty() || st.top() == '('))
+            st.push(s[i]);
+
+        else if (s[i] == '(' && st.top() == ')') {
+            st.pop(); 
+            if (st.empty())
+                count += 2;
+            else if (st.top() == ')') {
+                st.pop(); count++;
+            }
+            else if (st.top() == '(') {
+                st.pop(); count++;
+            }
+        }
+
+        else if (s[i] == ')' && (st.empty() || st.top() == '('))
+            st.push(s[i]);
+
+        else if (s[i] == ')' && st.top() == ')') {
+            st.pop();
+            if (st.empty())
+                count++;
+            else if (st.top() == '(')
+                st.pop();
+        }
+
+        i++;
+    }
+    if (!st.empty() && st.top() == ')') {
+        st.pop();
+        if (st.empty())
+            count += 2;
+        else if (st.top() == '(') {
+            st.pop(); count++;
+        }
+    }
+    while (!st.empty()) {
+        st.pop(); count += 2;
+    }
+    return count;
+}
+
+/* LC#1614
+
+A string is a valid parentheses string (denoted VPS) 
+if it meets one of the following:
+
+It is an empty string "", 
+or a single character not equal to "(" or ")",
+It can be written as AB 
+(A concatenated with B), 
+where A and B are VPS's, or
+It can be written as (A), 
+where A is a VPS.
+
+We can similarly define the nesting depth 
+depth(S) of any VPS S as follows:
+depth("") = 0
+depth(C) = 0, where C is a string with a single character not equal to "(" or ")".
+depth(A + B) = max(depth(A), depth(B)), where A and B are VPS's.
+depth("(" + A + ")") = 1 + depth(A), where A is a VPS.
+For example, "", "()()", and "()(()())" are VPS's (with nesting depths 0, 1, and 2), and ")(" and "(()" are not VPS's.
+
+Given a VPS represented as string s, return the nesting depth of s.
+*/
+
+// beats 100% LC users
+int maxDepth(string s) {
+    int depth = 0;
+    stack<char> st;
+    for (auto &ch : s) {
+        if (ch == '(') {
+            st.push(ch);
+            depth = max(depth, (int)st.size());
+        }
+        else if (ch == ')')
+            st.pop();
+    }
+    return depth;
 }
 
 int main() {

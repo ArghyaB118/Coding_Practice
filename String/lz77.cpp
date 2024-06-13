@@ -65,6 +65,25 @@ string decodeString (string s) {
 	}
 }
 
+string decodeString (string s) {
+	bool is_ready = true;
+	for (auto &ch: s) {
+		if (ch == '[') {
+			is_ready = false;
+			break;
+		}
+	}
+	if (is_ready) { return s; }
+	string res = "";
+	vector<int> start_indices, end_indices;
+	for (int i = 0; i < s.length(); i++) {
+		if (s[i] == '[')
+			start_indices.push_back(i);
+		else if (s[i] == ']')
+			end_indices.push_back(i);
+	}
+}
+
 int main () {
 	string s = "3[a]2[bc]";
 	cout << decodeString(s) << endl;

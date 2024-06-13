@@ -54,6 +54,50 @@ vector<int> countSubarrays (vector<int> arr) {
 	return num_subarrays;
 }
 
+/* LC#689
+
+Given an integer array nums and an integer k, 
+find three non-overlapping subarrays 
+of length k with maximum sum and return them.
+
+Return the result as a list of indices 
+representing the starting position 
+of each interval (0-indexed). 
+If there are multiple answers, 
+return the lexicographically smallest one.
+*/
+
+vector<int> maxSumOfThreeSubarrays(vector<int>& nums, int k) {
+	int n = nums.size();
+	vector<int> k_sum;
+	int sum = 0;
+	for (int i = 0; i < k; i++)
+		sum += nums[i];
+	k_sum.push_back(sum);
+	for (int i = k; i < n; i++) {
+		sum = sum - nums[i - k] + nums[i];
+		k_sum.push_back(sum);
+	}
+	vector<int> k_sum_max_right(n - k + 1, 0);
+	k_sum_max_right[n - k] = k_sum[n - k];
+	for (int i = n - k - 1; i >= 0; i--)
+		k_sum_max_right[i] = max(k_sum[i], k_sum_max_right[i + 1]);
+	
+	vector<int> max_two_sum(n - k + 1, 0);
+	for (int i = 0; i < n - k + 1; i++)
+		max_two_sum[i] = nums[i] + k_sum_max_right[i];
+
+	vector<int> max_two_sum_right(n - k + 1, 0);
+	max_two_sum_right[n - k] = max_two_sum[n - k];
+	for (int i = n - k - 1; i >= 0; i--)
+		max_two_sum_right[i] = max(max_two_sum[i], max_two_sum_right[i + 1]);
+
+	int sum = 0;
+	for (int i = 0; i < n - 2 * k + 1; i++) {
+		sum = max(sum, nums[i] + max_two_sum_right[i + k]);
+	}
+	return sum;
+}
 
 int main () {
 	vector<int> arr{3, 4, 1, 6, 2};

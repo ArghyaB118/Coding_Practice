@@ -98,12 +98,33 @@ grid[i][j] is either 0 or 1.
 
 typedef pair<int, int> cell;
 
+/* if we check all cells with we get a TLE
+Hence, we write a function to check
+whether a cell with 0 is merging two islands.
+But, it may lead us with a wrong answer
+as there might be an island that is largest
+without joining with any other island.
+Hence, we check all cells with 0, 
+where any peripheral cell is 1.*/
+
+bool mightBeJoiner (vector<vector<int>>& grid, cell c, int n) {
+    if (c.first - 1 >= 0 && grid[c.first - 1][c.second] == 1)
+        return true;
+    if (c.first + 1 < n && grid[c.first + 1][c.second] == 1)
+        return true;
+    if (c.second - 1 >= 0 && grid[c.first][c.second - 1] == 1)
+        return true;
+    if (c.second + 1 < n && grid[c.first][c.second + 1] == 1)
+        return true;
+    return false;
+}
+
 int largestIsland (vector<vector<int>>& grid)  {
     int n = grid.size();
     int max_island = 0;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            if (grid[i][j] == 0) {
+            if (grid[i][j] == 0 && mightBeJoiner(grid, {i,j}, n)) {
                 queue<cell> q; q.push({i, j});
                 int tmp_size = 0;
                 vector<vector<bool>> visited(n, vector<bool>(n, false));
@@ -132,7 +153,8 @@ int largestIsland (vector<vector<int>>& grid)  {
             }
         }
     }
-    if (max_island == 0) { return n * n; }
+    if (max_island == 0 && grid[0][0] == 1) { return n * n; }
+    if (max_island == 0 && grid[0][0] == 0) { return 1; }
     return max_island;
 }
 

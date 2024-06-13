@@ -90,6 +90,46 @@ public:
     }
 };
 
+/* LC#303
+
+Given an integer array nums, 
+handle multiple queries of the following type:
+
+Calculate the sum of the elements of nums 
+between indices left and right inclusive 
+where left <= right.
+Implement the NumArray class:
+
+NumArray(int[] nums) 
+Initializes the object with the integer array nums.
+
+int sumRange(int left, int right) 
+Returns the sum of the elements of nums 
+between indices left and right inclusive 
+(i.e. nums[left] + nums[left + 1] + ... + nums[right]).
+*/
+
+// beats ~61% LC users
+class NumArray {
+    vector<int> nums;
+public:
+    NumArray(vector<int>& nums) {
+        this->nums.push_back(nums[0]);
+        if (nums.size() > 1) {
+            for (int j = 1; j < nums.size(); j++) {
+                nums[j] += nums[j - 1];
+                this->nums.push_back(nums[j]);
+            }
+        }
+    }
+    
+    int sumRange(int left, int right) {
+        if (left == 0)
+            return this->nums[right];
+        return this->nums[right] - this->nums[left - 1];
+    }
+};
+
 int main () {
     RangeModule *obj = new RangeModule();
     obj->addRange(5, 10); obj->addRange(11, 15); obj->addRange(1, 4); obj->addRange(2, 3);

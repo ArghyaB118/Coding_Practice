@@ -23,6 +23,7 @@
 #include <unordered_map>
 using namespace std;
 
+// beats ~50% LC users
 string customSortString (string order, string s) {
     unordered_map<char, int> hashmap;
     for (int i = 0; i < s.length(); i++) {

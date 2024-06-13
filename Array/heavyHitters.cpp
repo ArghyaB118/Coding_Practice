@@ -33,6 +33,8 @@ vector<int> topKFrequent(vector<int>& nums, int k) {
             count[nums[i]]++;
     }
     priority_queue<Pair, vector<Pair>, cmp> pq(count.begin(), count.end());
+    // pq.pop() takes O(2 log n)
+    // total cost = O(n) + O (k log n)
     while (k > 0) {
         heavy_hitters.push_back(pq.top().first);
         pq.pop(); k--;
@@ -126,18 +128,97 @@ int maxFrequency (vector<int>& nums, int k) {
     return num;
 }
 
+/* LC#229
+
+Given an integer array of size n, 
+find all elements that appear 
+more than ⌊ n/3 ⌋ times.
+*/
+
+// beats ~27% LC users
+vector<int> majorityElement(vector<int>& nums) {
+    unordered_map<int, int> counts;
+    for (auto &i : nums) {
+        if (counts.find(i) != counts.end())
+            counts[i]++;
+        else if (counts.size() < 3)
+            counts[i] = 1;
+        else {
+            vector<int> cleanup;
+            for (auto &c : counts) {
+                c.second--;
+                if (c.second == 0)
+                    cleanup.push_back(c.first);
+            }
+            for (auto &i : cleanup)
+                counts.erase(i);
+        }
+    }
+    int n = nums.size() / 3;
+    for (auto &c : counts)
+        c.second = 0;
+    for (auto &i : nums)
+        if (counts.find(i) != counts.end())
+            counts[i]++;
+    vector<int> v;
+    for (auto &c : counts)
+        if (c.second > n)
+            v.push_back(c.first);
+    return v;
+}
+
+/* LC#1287
+
+Given an integer array 
+sorted in non-decreasing order, 
+there is exactly one integer 
+in the array that occurs 
+more than 25% of the time, 
+return that integer.
+*/
+
+// beats ~100% LC users
+int findSpecialInteger(vector<int>& arr) {
+    int size = arr.size();
+    int tmp = arr[0], count = 0;
+    for (auto &i : arr) {
+        if (i == tmp) { count++; }
+        if (count > size / 4)
+            return i;
+        if (i != tmp) {
+            tmp = i;
+            count = 1;
+        }
+    }
+    return -1;
+}
+
+/*
+Another solution could be for each unique element doing a binary search
+to get the last index. That saves us an O(n / 3) effort and reduces
+it to O(log n).
+However, in the worst-case, for each element if we do that
+the overall cost O(n log n).
+*/
+
 int main () {
 	vector<int> arr{1,2,4,2,5,5,2,1,2,3,5,1};
-	vector<int> heavy_hitters = topKelements(arr, 2);
+	vector<int> heavy_hitters = topKFrequent(arr, 2);
 	for (int i = 0; i < heavy_hitters.size(); i++)
 		cout << heavy_hitters[i] << " ";
 	cout << endl;
 
 	arr = {1,2,3,4,5};
-	cout << "The kth largest element: " << findKthLargest2(arr, 2) << endl;
+	cout << "The kth largest element: " << findKthLargest(arr, 2) << endl;
     
     arr = {1, 2, 4}; // {1,4,8,13};
     int k = 5;
     cout << maxFrequency(arr, k) << endl;
+
+    arr = {1, 2, 3, 4};
+    heavy_hitters = majorityElement(arr);
+    for (int &i : heavy_hitters)
+        cout << i << " ";
+    cout << endl;
 	return 0;
 }

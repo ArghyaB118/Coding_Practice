@@ -116,6 +116,80 @@ void kClosest(int array[], int size, int x, int k) {
 	}
 }
 
+/* LC#658
+
+Given a sorted integer array arr, 
+two integers k and x, 
+return the k closest integers to x in the array. 
+The result should also be sorted in ascending order.
+*/
+
+int binary_search (vector<int>& arr, int x) {
+	if (x <= arr[0])
+		return 0;
+	else if (arr.back() <= x)
+		return arr.size() - 1;
+
+	int left = 0, right = arr.size() - 1;
+	while (left < right) {
+		if (right - left == 1 && arr[left] >= x)
+			return left;
+		else if (right - left == 1 && arr[left] < x && arr[right] >= x)
+			return right;
+		int mid = (left + right) / 2;
+		if (arr[mid] == x)
+			return mid;
+		else if (arr[mid] < x)
+			left = mid;
+		else if (arr[mid] > x)
+			right = mid;
+	}
+    return -1;
+}
+
+vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+    int n = arr.size();
+    if (n == k)
+        return arr;
+
+	int index = binary_search(arr, x);
+    vector<int> result;
+    if (index == 0) {
+        for (int i = 0; i < k; i++)
+            result.push_back(arr[i]);
+        return result;
+    }
+    else if (index == n - 1) {
+        for (int i = n - k; i < n; i++)
+            result.push_back(arr[i]);
+        return result;
+    }
+
+	int left = index - 1, right = index;
+    
+    cout << left << " " << right << endl;
+	while (left >= 0 && right < n && k > 0) {
+        if (left == 0)
+            right++;
+        else if (right == n - 1)
+            left--;
+		else if (abs(arr[left] - x) <= abs(arr[right] - x))
+			left--;
+		else if (abs(arr[left] - x) > abs(arr[right] - x))
+			right++;
+		k--;
+	}
+	cout << left << " " << right << endl;
+    if (right - left == k && abs(arr[left] - x) <= abs(arr[right] - x))
+        right--;
+    else if (right - left == k && abs(arr[left] - x) > abs(arr[right] - x))
+        left++;
+    
+    for (int i = left; i <= right; i++)
+        result.push_back(arr[i]);
+    return result;
+}
+
 
 int main () {
 	vector<vector<int>> points = {{3,3},{5,-1},{-2,4}};
